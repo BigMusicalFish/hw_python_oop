@@ -1,4 +1,3 @@
-
 class InfoMessage:
     def __init__(self,
                  training_type: str,
@@ -64,24 +63,26 @@ class Running(Training):
 
 
 class SportsWalking(Training):
-    WALKING_CONSTANT_1 = 0.035
-    WALKING_CONSTANT_2 = 0.029
+    WALK_CONST_1 = 0.035
+    WALK_CONST_2 = 0.029
+    WALK_CONST_3 = 0.278
 
     def __init__(self, action, duration, weight, height):
         super().__init__(action, duration, weight)
         self.height = height
 
     def get_spent_calories(self):
-        ms_speed = super().get_mean_speed() * 1000 / 3600
+        ms_speed = super().get_mean_speed() * self.WALK_CONST_3
         m_height = self.height / 100
         min_duration = self.duration * self.MINUTES
-        return ((self.WALKING_CONSTANT_1 * self.weight
+        return ((self.WALK_CONST_1 * self.weight
                 + ms_speed**2 / m_height)
-                * self.WALKING_CONSTANT_2 * self.weight) * min_duration
+                * self.WALK_CONST_2 * self.weight) * min_duration
 
 
 class Swimming(Training):
-    SWIMMING_CONSTANTA = 1.1
+    SWIMM_CONST_1 = 1.1
+    SWIMM_CONST_2 = 2
 
     def __init__(self, action, duration, weight, length_pool, count_pool):
         super().__init__(action, duration, weight)
@@ -95,13 +96,16 @@ class Swimming(Training):
 
     def get_spent_calories(self):
         mid_speed = self.get_mean_speed()
-        calories = ((mid_speed + self.SWIMMING_CONSTANTA)
-                    * 2 * self.weight * self.duration)
+        calories = ((mid_speed + self.SWIMM_CONST_1)
+                    * self.SWIMM_CONST_2 * self.weight
+                    * self.duration)
         return calories
 
 
 def read_package(workout_type: str, data: list) -> Training:
-    training_dict = {'SWM': Swimming, 'RUN': Running, 'WLK': SportsWalking}
+    training_dict = {'SWM': Swimming,
+                     'RUN': Running,
+                     'WLK': SportsWalking}
     return training_dict[workout_type](*data)
 
 
