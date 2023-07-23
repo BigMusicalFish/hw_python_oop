@@ -86,7 +86,6 @@ class Swimming(Training):
     SWIMM_CONST_1 = 1.1
     SWIMM_CONST_2 = 2
 
-
     def __init__(self, action, duration, weight, length_pool, count_pool):
         super().__init__(action, duration, weight)
         self.length_pool = length_pool
