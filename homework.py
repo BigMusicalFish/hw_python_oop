@@ -82,9 +82,10 @@ class SportsWalking(Training):
 
 
 class Swimming(Training):
+    LEN_STEP = 1.38
     SWIMM_CONST_1 = 1.1
     SWIMM_CONST_2 = 2
-    LEN_STEP = 1.83
+
 
     def __init__(self, action, duration, weight, length_pool, count_pool):
         super().__init__(action, duration, weight)
