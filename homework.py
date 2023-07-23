@@ -20,24 +20,20 @@ class InfoMessage:
         self.calories = calories
 
     def get_message(self) -> str:
-        return (
-                f'Тип тренировки: {self.training_type}; '
+        return (f'Тип тренировки: {self.training_type}; '
                 f'Длительность: {self.duration:.3f} ч.; '
                 f'Дистанция: {self.distance:.3f} км; '
                 f'Ср. скорость: {self.speed:.3f} км/ч; '
-                f'Потрачено ккал: {self.calories:.3f}.'
-                )
+                f'Потрачено ккал: {self.calories:.3f}.')
 
 
 class Training:
     """Базовый класс тренировки."""
 
-    def __init__(
-                 self,
+    def __init__(self,
                  action: int,
                  duration: float,
-                 weight: float
-                 ) -> None:
+                 weight: float) -> None:
         self.action = action
         self.duration = duration
         self.weight = weight
@@ -56,13 +52,11 @@ class Training:
         pass
 
     def show_training_info(self) -> InfoMessage:
-        return InfoMessage(
-                           self.__class__.__name__,
+        return InfoMessage(self.__class__.__name__,
                            self.duration,
                            self.get_distance(),
                            self.get_mean_speed(),
-                           self.get_spent_calories()
-                           )
+                           self.get_spent_calories())
 
 
 class Running(Training):
@@ -108,17 +102,20 @@ class Swimming(Training):
                     * 2 * self.weight * self.duration)
         return calories
 
+
 def read_package(workout_type: str, data: list) -> Training:
     training_dict = {
                     'SWM': Swimming,
                     'RUN': Running,
                     'WLK': SportsWalking
-                    }
+    }
     return training_dict[workout_type](*data)
+
 
 def main(training: Training) -> None:
     its_work = training.show_training_info()
     print(its_work.get_message())
+
 
 if __name__ == '__main__':
     packages = [
