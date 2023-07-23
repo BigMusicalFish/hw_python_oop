@@ -66,6 +66,7 @@ class SportsWalking(Training):
     WALK_CONST_1 = 0.035
     WALK_CONST_2 = 0.029
     WALK_CONST_3 = 0.278
+    WALK_CONST_4 = 100
 
     def __init__(self, action, duration, weight, height):
         super().__init__(action, duration, weight)
@@ -73,7 +74,7 @@ class SportsWalking(Training):
 
     def get_spent_calories(self):
         ms_speed = super().get_mean_speed() * self.WALK_CONST_3
-        m_height = self.height / 100
+        m_height = self.height / self.WALK_CONST_4
         min_duration = self.duration * self.MINUTES
         return ((self.WALK_CONST_1 * self.weight
                 + ms_speed**2 / m_height)
@@ -83,12 +84,12 @@ class SportsWalking(Training):
 class Swimming(Training):
     SWIMM_CONST_1 = 1.1
     SWIMM_CONST_2 = 2
+    LEN_STEP = 1.83
 
     def __init__(self, action, duration, weight, length_pool, count_pool):
         super().__init__(action, duration, weight)
         self.length_pool = length_pool
         self.count_pool = count_pool
-        self.LEN_STEP = 1.83
 
     def get_mean_speed(self):
         return (self.length_pool * self.count_pool
