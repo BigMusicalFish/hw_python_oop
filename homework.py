@@ -20,8 +20,8 @@ class InfoMessage:
 
 
 class Training:
-    M_IN_KM = 1000
     LEN_STEP = 0.65
+    M_IN_KM = 1000
     MINUTES = 60
 
     def __init__(self,
@@ -71,14 +71,14 @@ class SportsWalking(Training):
     def __init__(self, action, duration, weight, height):
         super().__init__(action, duration, weight)
         self.height = height
-
+#((0.035 * вес + (средняя_скорость_в_метрах_в_секунду**2 / рост_в_метрах)* 0.029 * вес) * время_тренировки_в_минутах)
     def get_spent_calories(self):
         ms_speed = super().get_mean_speed() * self.WALK_CONST_3
         m_height = self.height / self.WALK_CONST_4
         min_duration = self.duration * self.MINUTES
         return ((self.WALK_CONST_1 * self.weight
-                + ms_speed**2 / m_height)
-                * self.WALK_CONST_2 * self.weight) * min_duration
+                 + (ms_speed**2 / m_height) * self.WALK_CONST_2
+                 * self.weight) * min_duration)
 
 
 class Swimming(Training):
