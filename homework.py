@@ -1,12 +1,10 @@
-CALORIES_MEAN_SPEED_MULTIPLIER = 18
-CALORIES_MEAN_SPEED_SHIFT = 1.79
+
 WALKING_CONSTANT_1 = 0.035
 WALKING_CONSTANT_2 = 0.029
 SWIMMING_CONSTANTA = 1.1
 
 
 class InfoMessage:
-    """Информационное сообщение о тренировке."""
     def __init__(self,
                  training_type: str,
                  duration: float,
@@ -28,7 +26,8 @@ class InfoMessage:
 
 
 class Training:
-    """Базовый класс тренировки."""
+    M_IN_KM = 1000
+    LEN_STEP = 0.65
 
     def __init__(self,
                  action: int,
@@ -37,8 +36,6 @@ class Training:
         self.action = action
         self.duration = duration
         self.weight = weight
-        self.M_IN_KM = 1000
-        self.LEN_STEP = 0.65
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
@@ -60,12 +57,14 @@ class Training:
 
 
 class Running(Training):
+    CALORIES_MEAN_SPEED_MULTIPLIER = 18
+    CALORIES_MEAN_SPEED_SHIFT = 1.79
 
     def get_spent_calories(self):
         min_speed = self.duration * 60
         mid_speed = super().get_mean_speed()
-        return ((CALORIES_MEAN_SPEED_MULTIPLIER
-                * mid_speed + CALORIES_MEAN_SPEED_SHIFT)
+        return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
+                * mid_speed + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight / self.M_IN_KM * min_speed)
 
 
