@@ -66,8 +66,6 @@ class Training:
 
 
 class Running(Training):
-    def __init__(self, action, duration, weight):
-        super().__init__(action, duration, weight)
 
     def get_spent_calories(self):
         min_speed = self.duration * 60
@@ -110,7 +108,6 @@ class Swimming(Training):
                     * 2 * self.weight * self.duration)
         return calories
 
-
 def read_package(workout_type: str, data: list) -> Training:
     training_dict = {
                     'SWM': Swimming,
@@ -119,11 +116,9 @@ def read_package(workout_type: str, data: list) -> Training:
                     }
     return training_dict[workout_type](*data)
 
-
 def main(training: Training) -> None:
     its_work = training.show_training_info()
     print(its_work.get_message())
-
 
 if __name__ == '__main__':
     packages = [
