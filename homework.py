@@ -1,48 +1,49 @@
+from dataclasses import dataclass, asdict
+
+
+@dataclass
 class InfoMessage:
-    def __init__(self,
-                 training_type: str,
-                 duration: float,
-                 distance: float,
-                 speed: float,
-                 calories: float) -> None:
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+    """Informational message about training."""
+    training_type: str
+    duration: float
+    distance: float
+    speed: float
+    calories: float
+    results = ('Тип тренировки: {}; '
+               'Длительность: {:.3f} ч.; '
+               'Дистанция: {:.3f} км; '
+               'Ср. скорость: {:.3f} км/ч; '
+               'Потрачено ккал: {:.3f}.')
 
     def get_message(self) -> str:
-        return (f'Тип тренировки: {self.training_type}; '
-                f'Длительность: {self.duration:.3f} ч.; '
-                f'Дистанция: {self.distance:.3f} км; '
-                f'Ср. скорость: {self.speed:.3f} км/ч; '
-                f'Потрачено ккал: {self.calories:.3f}.')
+        return self.results.format(*asdict(self).values())
 
 
+@dataclass
 class Training:
+    """Basic training class."""
     LEN_STEP = 0.65
     M_IN_KM = 1000
     MINUTES = 60
 
-    def __init__(self,
-                 action: int,
-                 duration: float,
-                 weight: float) -> None:
-        self.action = action
-        self.duration = duration
-        self.weight = weight
+    action: int
+    duration: float
+    weight: float
 
     def get_distance(self) -> float:
+        """Get the distance km."""
         return self.action * self.LEN_STEP / self.M_IN_KM
 
     def get_mean_speed(self) -> float:
+        """Get the average speed of movement."""
         km_distance = self.get_distance()
         return km_distance / self.duration
 
     def get_spent_calories(self) -> float:
-        pass
+        """Get the calories expended"""
 
     def show_training_info(self) -> InfoMessage:
+        """Return the information message about the completed training"""
         return InfoMessage(self.__class__.__name__,
                            self.duration,
                            self.get_distance(),
@@ -51,10 +52,12 @@ class Training:
 
 
 class Running(Training):
+    '''Training - running.'''
     CALORIES_MEAN_SPEED_MULTIPLIER = 18
     CALORIES_MEAN_SPEED_SHIFT = 1.79
 
     def get_spent_calories(self):
+        '''Return the calories spent while running.'''
         min_speed = self.duration * self.MINUTES
         mid_speed = super().get_mean_speed()
         return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
@@ -62,55 +65,70 @@ class Running(Training):
                 * self.weight / self.M_IN_KM * min_speed)
 
 
+@dataclass
 class SportsWalking(Training):
-    WALK_CONST_1 = 0.035
-    WALK_CONST_2 = 0.029
-    WALK_CONST_3 = 0.278
-    WALK_CONST_4 = 100
+    '''Training - sports walking.'''
+    SETTING_WALK_1 = 0.035
+    SETTING_WALK_2 = 0.029
+    METERS_SECONDS = 0.278
+    CENTIMETRS = 100
 
-    def __init__(self, action, duration, weight, height):
-        super().__init__(action, duration, weight)
-        self.height = height
+    height: float
+
+    def __post_init__(self):
+        super().__init__(self.action, self.duration, self.weight)
 
     def get_spent_calories(self):
-        ms_speed = super().get_mean_speed() * self.WALK_CONST_3
-        m_height = self.height / self.WALK_CONST_4
+        '''Return the calories spent while walking.'''
+        ms_speed = super().get_mean_speed() * self.METERS_SECONDS
+        m_height = self.height / self.CENTIMETRS
         min_duration = self.duration * self.MINUTES
-        return ((self.WALK_CONST_1 * self.weight
-                 + (ms_speed**2 / m_height) * self.WALK_CONST_2
+        return ((self.SETTING_WALK_1 * self.weight
+                 + (ms_speed**2 / m_height) * self.SETTING_WALK_2
                  * self.weight) * min_duration)
 
 
+@dataclass
 class Swimming(Training):
+    '''Training - swimming.'''
     LEN_STEP = 1.38
-    SWIMM_CONST_1 = 1.1
-    SWIMM_CONST_2 = 2
+    SETTING_SWIMM_1 = 1.1
+    SETTING_SWIMM_2 = 2
 
-    def __init__(self, action, duration, weight, length_pool, count_pool):
-        super().__init__(action, duration, weight)
-        self.length_pool = length_pool
-        self.count_pool = count_pool
+    length_pool: float
+    count_pool: float
+
+    def __post_init__(self):
+        super().__init__(self.action, self.duration, self.weight)
 
     def get_mean_speed(self):
+        """Get an average speed when swimming."""
         return (self.length_pool * self.count_pool
                 / self.M_IN_KM / self.duration)
 
     def get_spent_calories(self):
+        '''Return the calories spent while swimming.'''
         mid_speed = self.get_mean_speed()
-        calories = ((mid_speed + self.SWIMM_CONST_1)
-                    * self.SWIMM_CONST_2 * self.weight
+        calories = ((mid_speed + self.SETTING_SWIMM_1)
+                    * self.SETTING_SWIMM_2 * self.weight
                     * self.duration)
         return calories
 
 
 def read_package(workout_type: str, data: list) -> Training:
+    '''Read the sensor data.'''
     training_dict = {'SWM': Swimming,
                      'RUN': Running,
                      'WLK': SportsWalking}
-    return training_dict[workout_type](*data)
+    if workout_type not in training_dict:
+        print('Incorrect workout type.')
+        return
+    else:
+        return training_dict[workout_type](*data)
 
 
 def main(training: Training) -> None:
+    '''Print a training message.'''
     its_work = training.show_training_info()
     print(its_work.get_message())
 
