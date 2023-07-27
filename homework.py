@@ -124,7 +124,6 @@ def main(training: Training) -> None:
     '''Print a training message.'''
     its_work = training.show_training_info()
     print(its_work.get_message())
-    print(Training.get_spent_calories)
 
 
 if __name__ == '__main__':
@@ -132,6 +131,8 @@ if __name__ == '__main__':
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
+        ('WLK', [9000, 1.5, 75, 180]),
+        ('WLK', [3000.33, 2.512, 75.8, 180.1])
     ]
 
     for workout_type, data in packages:
