@@ -41,6 +41,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Get the calories expended"""
+        raise NotImplementedError('Использован метод базового класса.')
 
     def show_training_info(self) -> InfoMessage:
         """Return the information message about the completed training"""
@@ -75,9 +76,6 @@ class SportsWalking(Training):
 
     height: float
 
-    def __post_init__(self):
-        super().__init__(self.action, self.duration, self.weight)
-
     def get_spent_calories(self):
         '''Return the calories spent while walking.'''
         ms_speed = super().get_mean_speed() * self.METERS_SECONDS
@@ -97,9 +95,6 @@ class Swimming(Training):
 
     length_pool: float
     count_pool: float
-
-    def __post_init__(self):
-        super().__init__(self.action, self.duration, self.weight)
 
     def get_mean_speed(self):
         """Get an average speed when swimming."""
@@ -121,16 +116,15 @@ def read_package(workout_type: str, data: list) -> Training:
                      'RUN': Running,
                      'WLK': SportsWalking}
     if workout_type not in training_dict:
-        print('Incorrect workout type.')
-        return
-    else:
-        return training_dict[workout_type](*data)
+        return ('Incorrect workout type.')
+    return training_dict[workout_type](*data)
 
 
 def main(training: Training) -> None:
     '''Print a training message.'''
     its_work = training.show_training_info()
     print(its_work.get_message())
+    print(Training.get_spent_calories)
 
 
 if __name__ == '__main__':
